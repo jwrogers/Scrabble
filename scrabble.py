@@ -15,6 +15,10 @@ import string, numpy, pdb
 with open("./dictionary.sorted") as f:
 	dict_list = f.read().splitlines()
 
+# Create list of all letters in the alphabet
+alphabet = list(string.ascii_lowercase)
+	
+
 # Function to calculate all possible tile permutations
 def perm(tiles):
 	perm_list=[]
@@ -53,28 +57,29 @@ def base_score(word):
 
 # Function to calculate list of possible words when the input letters contain blanks
 def blanks(rack):
-	# Create list of all letters in the alphabet
-	alphabet = list(string.ascii_lowercase)
+	
 	w_list = []
 
 	# Calculate all combinations of 2 letter pairs from the alphabet
 	c_list = list(combinations(alphabet, 2))
+	r_list = []
 	
 	# Generator
 	def replaceVals(x):
 		for i in range(0,len(x)):
        			yield x[i]
-
+	# One Blank
 	if rack.count('_') == 1:
-		print('One Blank')
-		# One Blank
+		
 		for letter in alphabet:
-			rack.replace('_', letter)
-			w_list.append(scrabble(rack))
+			w_list.append(scrabble(rack.replace('_',letter)))
+
+		for elem in list(chain.from_iterable(w_list)):
+			if elem not in r_list:
+				r_list.append(elem)
+	# Two Blanks
 	elif rack.count('_') == 2:
-		# Two Blanks
-		#pdb.set_trace()
-		print('Two Blanks')
+		
 		# Loop through c_list
 		for pair in c_list:
 			# create generator
@@ -83,14 +88,23 @@ def blanks(rack):
 			for j in list([i for i in range(len(rack)) if rack[i] =='_']):
 			        lstr[j] = next(val)
 			w_list.append(scrabble(lstr))	
+
+		for elem in list(chain.from_iterable(w_list)):
+			if elem not in r_list:
+				r_list.append(elem)
+	# No Blanks
 	else:
-		# Error	
-		return 0
-#	pdb.set_trace()
-	r_list = []
-	for elem in list(chain.from_iterable(w_list)):
-		if elem not in r_list:
-			r_list.append(elem)
+		r_list = scrabble(rack)
 
 	return r_list
-print(blanks('a_b_c'))
+# User input
+rack = input('Enter the letters: ').lower()
+print('dbg:', rack)
+for el in [elem for elem in rack]:
+	if (el not in alphabet) and (el != '_') :
+		#error
+		print('dbg: quit')
+		quit()
+
+print(blanks(rack))
+print(scrabble(rack))

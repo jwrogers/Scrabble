@@ -5,3 +5,4 @@ The program also allows up to two of the letters in the input to be blanks.
 ## Future Plans
 + User input instead of hardcoded input
 + Expansion to include knowledge of the wider game
++ Improve Dictionary to remove invalid words
