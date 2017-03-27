@@ -9,7 +9,10 @@
 # John W Rogers 2017
 
 from itertools import permutations, combinations, chain
-import string, numpy, pdb
+import string, numpy
+
+# Scoring Dictionary
+scores = {'a':1, 'b':3, 'c':3, 'd':2, 'e':1, 'f':4, 'g':2, 'h':4, 'i':1, 'j':8, 'k':5, 'l':1, 'm':3, 'n':1, 'o':1, 'p':3, 'q':10, 'r':1, 's':1, 't':1, 'u':1, 'v':4, 'w':4, 'x':8, 'y':4, 'z':10, '_':0}
 
 # open dictionary and form the dictionary list
 with open("./dictionary.sorted") as f:
@@ -28,32 +31,36 @@ def perm(tiles):
 		perm_list.append(list(permutations(tiles,i)))
 	return perm_list
 
-# Function to calculate all possible words from a list of letters
+# Function to calculate all possible anagrams of given letters 
 def scrabble(rack):
-
-	# List of all possible words
-	possible = []
-	
-	# Permutation List
 	p_list = []
-	
-	# create list of permutations
-	tmp = list(chain.from_iterable(perm(rack)))
-	for p in tmp:
-		p_list.append(''.join(p))
-	
-	# for each permutation check against list of words
-	for elem in p_list:
-		# Check if word is in the list of words and not already in the list of all possible words
-		if (elem in dict_list) and (elem not in possible):
-			possible.append(elem)		
-
-	return possible
+	length = len(rack)+1	
+	for i in range(2,length):
+		p_list = []
+		# Create list of permutations
+		tmp = list(permutations(rack, i))
+		for p in tmp:
+			p_list.append(''.join(p))
+		tmp = []
+		
+		# check if word is in list of words 
+		possible = []
+		for elem in p_list:
+			if (elem in dict_list) and (elem not in possible):
+				possible.append(elem)
+		possible.reverse()
+		for j in range(len(possible)):
+			print(possible.pop())
 
 # Function to calculate the base score based on the letters only
 def base_score(word):
-	# To be completed
-	return 0
+
+	score = 0
+
+	for letter in list(word):
+		score += scores[letter]
+
+	return score
 
 # Function to calculate list of possible words when the input letters contain blanks
 def blanks(rack):
@@ -99,12 +106,8 @@ def blanks(rack):
 	return r_list
 # User input
 rack = input('Enter the letters: ').lower()
-print('dbg:', rack)
 for el in [elem for elem in rack]:
 	if (el not in alphabet) and (el != '_') :
 		#error
-		print('dbg: quit')
 		quit()
 
-print(blanks(rack))
-print(scrabble(rack))
